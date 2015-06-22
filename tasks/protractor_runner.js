@@ -44,9 +44,9 @@ module.exports = function(grunt) {
     grunt.verbose.writeln("Options: " + util.inspect(opts));
 
     var keepAlive = opts['keepAlive'];
-    var strArgs = ["seleniumAddress", "seleniumServerJar", "seleniumPort", "baseUrl", "rootElement", "browser", "chromeDriver", "chromeOnly", "directConnect", "sauceUser", "sauceKey", "sauceSeleniumAddress", "framework", "suite", "beforeLaunch", "onPrepare"];
+    var strArgs = ["seleniumAddress", "seleniumServerJar", "seleniumPort", "baseUrl", "rootElement", "browser", "sauceUser", "sauceKey", "sauceSeleniumAddress", "framework", "suite"];
     var listArgs = ["specs", "exclude"];
-    var boolArgs = ["includeStackTrace", "verbose"];
+    var boolArgs = ["includeStackTrace", "verbose", "chromeDriver", "chromeOnly", "directConnect"];
     var objectArgs = ["params", "capabilities", "cucumberOpts", "mochaOpts"];
 
     var args = process.execArgv.concat([protractorBinPath, opts.configFile]);
@@ -69,8 +69,8 @@ module.exports = function(grunt) {
       }
     });
     boolArgs.forEach(function(a) {
-      if (a in opts.args || grunt.option(a)) {
-        args.push('--'+a);
+      if (a in opts.args || (grunt.option(a) !== undefined)) {
+        args.push('--'+a+'='+(grunt.option(a) !== undefined ? grunt.option(a) : a));
       }
     });
 
@@ -149,7 +149,7 @@ module.exports = function(grunt) {
           }
           else {
             this.push(chunk + '\n');
-          }  
+          }
           callback();
         }))
         .pipe(fs.createWriteStream(opts.output));
